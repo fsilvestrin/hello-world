@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#111111">
+<title>Hello World</title>
+<style>
+  :root {
+    --bg: #111111;
+    --ink: #dbd7cf;
+    --accent: #ec675b;
+    --ease: cubic-bezier(.2, .7, .2, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; }
+
+  html, body { height: 100%; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue",
+      "Segoe UI", Roboto, "Noto Sans", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow: hidden;
+  }
+
+  main {
+    position: relative;
+    height: 100dvh;
+    display: grid;
+    place-items: center;
+    padding: 0 5vw;
+    isolation: isolate;
+  }
+
+  /* Luz atrás da palavra, na cor da língua atual */
+  .glow {
+    position: absolute;
+    z-index: -1;
+    left: 50%;
+    top: 50%;
+    width: min(90vw, 1100px);
+    aspect-ratio: 2 / 1;
+    translate: -50% -50%;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: .13;
+    filter: blur(110px);
+    transition: background-color 1.4s ease;
+    animation: breathe 9s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    50% { opacity: .19; scale: 1.08; }
+  }
+
+  .stage {
+    width: 100%;
+    text-align: center;
+  }
+
+  h1 {
+    --size: clamp(2.75rem, 12vw, 11rem);
+    --fit: 1;
+    font-size: calc(var(--size) * var(--fit));
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.25;
+    white-space: nowrap;
+  }
+
+  h1[data-loose] { letter-spacing: 0; }
+
+  h1 span {
+    display: inline-block;
+    opacity: 0;
+    animation: in .95s var(--ease) forwards;
+    animation-delay: calc(var(--i) * 48ms);
+    will-change: transform, opacity, filter;
+  }
+
+  h1.out span {
+    animation: out .5s ease-in forwards;
+    animation-delay: calc(var(--i) * 14ms);
+  }
+
+  @keyframes in {
+    from { opacity: 0; transform: translateY(.32em); filter: blur(16px); }
+    to   { opacity: 1; transform: none; filter: blur(0); }
+  }
+
+  @keyframes out {
+    from { opacity: 1; transform: none; filter: blur(0); }
+    to   { opacity: 0; transform: translateY(-.18em); filter: blur(12px); }
+  }
+
+  .name {
+    margin-top: clamp(1rem, 2.5vw, 2rem);
+    font-size: .8125rem;
+    font-weight: 500;
+    letter-spacing: .14em;
+    color: var(--ink);
+    opacity: .5;
+    transition: opacity .4s ease;
+  }
+
+  .name.out { opacity: 0; }
+
+  /* Assinatura: discreta, parada enquanto as línguas trocam */
+  .credit {
+    display: inline-block;
+    margin-top: clamp(2.25rem, 6vh, 4rem);
+    padding: .5rem .75rem;
+    font-size: .8125rem;
+    letter-spacing: .02em;
+    color: var(--ink);
+    text-decoration: none;
+    opacity: .45;
+    transition: opacity .3s ease;
+  }
+
+  .credit b {
+    font-weight: 500;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat;
+    padding-bottom: 2px;
+    transition: color .3s ease;
+  }
+
+  .credit:hover,
+  .credit:focus-visible { opacity: 1; }
+
+  .credit:hover b,
+  .credit:focus-visible b { color: var(--accent); }
+
+  .credit:focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+
+  /* A paleta, em baixo, marca onde estamos */
+  nav {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: max(2rem, env(safe-area-inset-bottom));
+    display: flex;
+    justify-content: center;
+    padding: 0 12px;
+  }
+
+  nav button {
+    appearance: none;
+    border: 0;
+    background: none;
+    padding: 12px clamp(2px, .55vw, 7px);
+    cursor: pointer;
+  }
+
+  nav button i {
+    display: block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--c);
+    opacity: .28;
+    transition: opacity .5s ease, scale .5s var(--ease);
+  }
+
+  nav button:hover i { opacity: .7; }
+
+  nav button[aria-current="true"] i {
+    opacity: 1;
+    scale: 1.7;
+  }
+
+  nav button:focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: -4px;
+    border-radius: 8px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .glow { animation: none; }
+    h1 span, h1.out span { animation-duration: .4s; animation-delay: 0s; }
+    @keyframes in  { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes out { from { opacity: 1; } to { opacity: 0; } }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="glow" aria-hidden="true"></div>
+
+  <div class="stage">
+    <h1 id="hello" aria-live="off">Hello World</h1>
+    <p class="name" id="name">English</p>
+    <a class="credit" href="https://fsilvestrin.com" target="_blank" rel="noopener">find me on <b>fsilvestrin.com</b></a>
+  </div>
+
+  <nav id="dots" aria-label="Languages"></nav>
+</main>
+
+<script>
+  // Paleta do anexo: 21 cores, uma por língua. Fundo #111111, texto #dbd7cf.
+  const COLORS = [
+    '#ec675b', '#f19f79', '#f4b875', '#f6c658', '#f8e277', '#f4f055', '#c9ee50',
+    '#a3f07b', '#77e790', '#7ee0b6', '#6cdfca', '#76e2e6', '#93def6', '#80c7f8',
+    '#90b9f9', '#9ea8f9', '#c8b4fa', '#dea4f6', '#f2ace2', '#f19ec5', '#f098a9'
+  ];
+
+  // whole: escritas ligadas ou da direita para a esquerda animam por palavra,
+  // para não partir a ligação entre as letras.
+  const HELLOS = [
+    { lang: 'en', name: 'English',    text: 'Hello World' },
+    { lang: 'pt', name: 'Português',  text: 'Olá Mundo' },
+    { lang: 'es', name: 'Español',    text: 'Hola Mundo' },
+    { lang: 'fr', name: 'Français',   text: 'Bonjour le Monde' },
+    { lang: 'it', name: 'Italiano',   text: 'Ciao Mondo' },
+    { lang: 'de', name: 'Deutsch',    text: 'Hallo Welt' },
+    { lang: 'nl', name: 'Nederlands', text: 'Hallo Wereld' },
+    { lang: 'sv', name: 'Svenska',    text: 'Hej Världen' },
+    { lang: 'pl', name: 'Polski',     text: 'Witaj Świecie' },
+    { lang: 'ru', name: 'Русский',    text: 'Привет, мир' },
+    { lang: 'el', name: 'Ελληνικά',   text: 'Γειά σου Κόσμε' },
+    { lang: 'tr', name: 'Türkçe',     text: 'Merhaba Dünya' },
+    { lang: 'ar', name: 'العربية',    text: 'مرحبا بالعالم', whole: true, rtl: true },
+    { lang: 'he', name: 'עברית',      text: 'שלום עולם',     whole: true, rtl: true },
+    { lang: 'hi', name: 'हिन्दी',       text: 'नमस्ते दुनिया',  whole: true },
+    { lang: 'th', name: 'ไทย',        text: 'สวัสดีชาวโลก' },
+    { lang: 'vi', name: 'Tiếng Việt', text: 'Xin chào Thế giới' },
+    { lang: 'zh', name: '中文',        text: '你好，世界' },
+    { lang: 'ja', name: '日本語',      text: 'こんにちは世界' },
+    { lang: 'ko', name: '한국어',      text: '안녕하세요 세계' },
+    { lang: 'sw', name: 'Kiswahili',  text: 'Habari Dunia' }
+  ];
+
+  const HOLD = 2400;   // tempo com a palavra parada
+  const OUT = 650;     // tempo de saída
+  const LOOSE = new Set(['ar', 'he', 'hi', 'th', 'zh', 'ja', 'ko']);
+
+  const h1 = document.getElementById('hello');
+  const nameEl = document.getElementById('name');
+  const dots = document.getElementById('dots');
+  const root = document.documentElement;
+  const segmenter = 'Segmenter' in Intl ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
+
+  let index = 0;
+  let timer;
+
+  const hex = c => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16));
+  const mix = (a, b, t) => {
+    const A = hex(a), B = hex(b);
+    return 'rgb(' + A.map((v, i) => Math.round(v + (B[i] - v) * t)).join(' ') + ')';
+  };
+
+  function units(item) {
+    if (item.whole) return item.text.split(/(\s+)/);
+    return segmenter ? [...segmenter.segment(item.text)].map(s => s.segment) : [...item.text];
+  }
+
+  function render(i) {
+    const item = HELLOS[i];
+    const from = COLORS[i];
+    const to = COLORS[(i + 1) % COLORS.length];
+    const parts = units(item);
+    const inked = parts.filter(p => p.trim()).length;
+
+    h1.classList.remove('out');
+    h1.lang = item.lang;
+    h1.dir = item.rtl ? 'rtl' : 'ltr';
+    h1.toggleAttribute('data-loose', LOOSE.has(item.lang));
+    h1.setAttribute('aria-label', item.text);
+    h1.textContent = '';
+
+    let n = 0;
+    for (const part of parts) {
+      if (!part.trim()) { h1.append(' '); continue; }
+      const span = document.createElement('span');
+      span.textContent = part;
+      span.setAttribute('aria-hidden', 'true');
+      span.style.setProperty('--i', n);
+      span.style.color = mix(from, to, inked > 1 ? n / (inked - 1) : 0);
+      h1.append(span);
+      n++;
+    }
+
+    fit();
+
+    nameEl.textContent = item.name;
+    nameEl.lang = item.lang;
+    nameEl.classList.remove('out');
+    root.style.setProperty('--accent', from);
+
+    [...dots.children].forEach((b, k) => b.setAttribute('aria-current', k === i));
+  }
+
+  // Encolhe a frase quando ela não cabe na largura da tela.
+  function fit() {
+    h1.style.setProperty('--fit', 1);
+    const room = h1.parentElement.clientWidth * 0.94;
+    const need = h1.scrollWidth;
+    if (need > room) h1.style.setProperty('--fit', (room / need).toFixed(3));
+  }
+
+  function go(i) {
+    clearTimeout(timer);
+    h1.classList.add('out');
+    nameEl.classList.add('out');
+    timer = setTimeout(() => {
+      index = (i + HELLOS.length) % HELLOS.length;
+      render(index);
+      schedule();
+    }, OUT);
+  }
+
+  function schedule() {
+    clearTimeout(timer);
+    const settle = 950 + h1.querySelectorAll('span').length * 48;
+    timer = setTimeout(() => go(index + 1), settle + HOLD);
+  }
+
+  HELLOS.forEach((item, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.style.setProperty('--c', COLORS[i]);
+    b.setAttribute('aria-label', item.name);
+    b.title = item.name;
+    b.append(document.createElement('i'));
+    b.addEventListener('click', () => { if (i !== index) go(i); });
+    dots.append(b);
+  });
+
+  addEventListener('resize', fit);
+  addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') go(index + 1);
+    if (e.key === 'ArrowLeft') go(index - 1);
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) clearTimeout(timer); else schedule();
+  });
+
+  render(0);
+  schedule();
+</script>
+</body>
+</html>
